@@ -1,28 +1,5 @@
-import json
+
 from typing import Any, Dict, List
-import fitz
-
-file = "example.pdf"
-setting_file = "setting.json"
-
-setting_JSON = open(setting_file)
-
-setting = json.load(setting_JSON)
-
-doc = fitz.open(file)
-
-page = doc[0]
-
-words = page.get_text("words", sort=True)
-text = page.get_text("text", sort=True)
-# print(text)
-
-# print(words)
-columns_area = setting["negotiations_columns"]
-
-result = dict()
-
-negociacoes = dict()
 
 
 def is_inside_rect(rect: List[float], boundary_rect: List[float]) -> bool:
@@ -59,6 +36,15 @@ def save_word(dict: Dict, key: str, word: str):
         dict[key] = [word]
 
 
+def save_negotiation(dict: Dict, key: str, column_name,  word: str):
+    if (dict.get(key)):
+        save_word(dict[key], column_name, word)
+    else:
+        dict[key] = {
+            column_name: [word]
+        }
+
+
 def get_raw_words(page):
     return page.get_text("words", sort=True)
 
@@ -72,7 +58,7 @@ def extract_mapped_words(page: Any, settings: Any):
 
 
 def get_mapped_area(word, boundaries):
-    mapped_areas = dict()
+    mapped_areas = {}
 
     is_found = False
 
@@ -97,43 +83,42 @@ def get_area_name(word, boundaries):
         if is_inside_rect(word[:4], boundary_rect):
             return area_name
 
-    pass
+
+def get_column_name(word, boundaries):
+    for column_name, column_boundary in boundaries.items():
+
+        boundary_line = [column_boundary["left"], column_boundary["right"]]
+
+        if (is_inside_line([word[0], word[2]], boundary_line)):
+            return column_name
 
 
 def map_words(words, boundaries):
-    mapped_words = dict()
+    mapped_words = {}
 
-    mapped_words["info"] = dict()
-    mapped_words["negotiations"] = dict()
+    area_boundaries = boundaries["mapped_areas"]
+
+    negotiation_column_boundaries = boundaries["negotiations_columns"]
+
+    mapped_words["info"] = {}
+    mapped_words["negotiations"] = {}
 
     for word in words:
-        area_name = get_area_name(word, setting["mapped_areas"])
+        area_name = get_area_name(word, area_boundaries)
 
         if area_name:
             save_word(mapped_words["info"], area_name, word[4])
 
         else:
-            for column_name, boundaries in columns_area.items():
+            column_name = get_column_name(word, negotiation_column_boundaries)
 
-                boundary_line = [boundaries["left"], boundaries["right"]]
+            if column_name:
+                save_negotiation(
+                    mapped_words["negotiations"], word[1], column_name, word[4])
 
-                if (is_inside_line([word[0], word[2]], boundary_line)):
-                    if (mapped_words["negotiations"].get(word[1])):
-                        save_word(mapped_words["negotiations"][word[1]], column_name, word[4])
-                    else:
-                        mapped_words["negotiations"][word[1]] = {
-                            column_name: [word[4]]
-                        }
-                    break
-
-                    
+                break
 
     return mapped_words
-
-
-test = extract_mapped_words(doc[0], setting)
-
-print(json.dumps(test, sort_keys=True, indent=4))
 
 
 class B3Parser:
@@ -148,17 +133,3 @@ class B3Parser:
 
     def parse_negotiations(self):
         pass
-
-    def parse_negotiations(self):
-        pass
-
-    def parse_negotiations(self):
-        pass
-
-
-""" 
-425 / 143 ---------------
-          |             |
-          |             |
-          ---------------  561 / 159
-"""
