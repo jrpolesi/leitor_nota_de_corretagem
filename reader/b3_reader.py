@@ -29,107 +29,90 @@ def is_inside_line(line: List[float], boundary_line: List[float]):
     return left > boundary_left and right < boundary_right
 
 
-def save_word(dict: Dict, key: str, word: str):
-    if (dict.get(key)):
-        dict[key].append(word)
-    else:
-        dict[key] = [word]
+class B3Reader:
+    raw_content = []
 
+    info_areas_setting = {}
+    negotiations_columns_settings = {}
 
-def save_negotiation(dict: Dict, key: str, column_name,  word: str):
-    if (dict.get(key)):
-        save_word(dict[key], column_name, word)
-    else:
-        dict[key] = {
-            column_name: [word]
-        }
+    mapped_content = {
+        "info": {},
+        "negotiations": {}
+    }
 
+    def __init__(self, page, settings):
+        self.info_areas_setting = settings.get("info_areas")
+        self.negotiations_columns_settings = settings.get(
+            "negotiations_columns")
 
-def get_raw_words(page):
-    return page.get_text("words", sort=True)
+        self.page = page
 
+        self.raw_content = self.get_raw_content(page)
 
-def extract_mapped_words(page: Any, settings: Any):
-    words = get_raw_words(page)
+    def get_raw_content(self, page):
+        return page.get_text("words", sort=True)
 
-    mapped_words = map_words(words, settings)
+    def get_mapped_content(self):
+        return self.__map_page_content()
 
-    return mapped_words
+    def __map_page_content(self):
+        for content in self.raw_content:
+            area_name = self.__get_area_name(content)
 
+            if area_name:
+                self.__save_info_content(area_name, content[4])
 
-def get_mapped_area(word, boundaries):
-    mapped_areas = {}
+            else:
+                column_name = self.__get_column_name(content)
 
-    is_found = False
+                if column_name:
+                    self.__save_negotiation(
+                        content[1], column_name, content[4])
 
-    for area_name, area_boundary in boundaries.items():
-        boundary_rect = area_boundary["top_left"] + \
-            area_boundary["bottom_right"]
+        return self.mapped_content
 
-        is_found = is_inside_rect(word[:4], boundary_rect)
+    def __get_area_name(self, word):
+        boundaries = self.info_areas_setting
 
-        if is_found:
-            save_word(mapped_areas, area_name, word[4])
-            break
+        for area_name, area_boundary in boundaries.items():
+            boundary_rect = area_boundary["top_left"] + \
+                area_boundary["bottom_right"]
 
-    return (mapped_areas, is_found)
+            if is_inside_rect(word[:4], boundary_rect):
+                return area_name
 
+        return None
 
-def get_area_name(word, boundaries):
-    for area_name, area_boundary in boundaries.items():
-        boundary_rect = area_boundary["top_left"] + \
-            area_boundary["bottom_right"]
+    def __get_column_name(self, content):
+        boundaries = self.negotiations_columns_settings
 
-        if is_inside_rect(word[:4], boundary_rect):
-            return area_name
+        for column_name, column_boundary in boundaries.items():
 
+            boundary_line = [column_boundary["left"], column_boundary["right"]]
 
-def get_column_name(word, boundaries):
-    for column_name, column_boundary in boundaries.items():
+            if (is_inside_line([content[0], content[2]], boundary_line)):
+                return column_name
 
-        boundary_line = [column_boundary["left"], column_boundary["right"]]
+        return None
 
-        if (is_inside_line([word[0], word[2]], boundary_line)):
-            return column_name
+    def __save_content_in(self, obj: Dict, key: str, content: str):
 
-
-def map_words(words, boundaries):
-    mapped_words = {}
-
-    area_boundaries = boundaries["mapped_areas"]
-
-    negotiation_column_boundaries = boundaries["negotiations_columns"]
-
-    mapped_words["info"] = {}
-    mapped_words["negotiations"] = {}
-
-    for word in words:
-        area_name = get_area_name(word, area_boundaries)
-
-        if area_name:
-            save_word(mapped_words["info"], area_name, word[4])
-
+        if (obj.get(key)):
+            obj[key].append(content)
         else:
-            column_name = get_column_name(word, negotiation_column_boundaries)
+            obj[key] = [content]
 
-            if column_name:
-                save_negotiation(
-                    mapped_words["negotiations"], word[1], column_name, word[4])
+    def __save_info_content(self, key, content):
+        info_contents = self.mapped_content["info"]
 
-                break
+        self.__save_content_in(info_contents, key, content)
 
-    return mapped_words
+    def __save_negotiation(self, key: str, column_name,  content: str):
+        negotiations = self.mapped_content["negotiations"]
 
-
-class B3Parser:
-    def __init__(self, file_path: str):
-        self.file_path = file_path
-
-    def parse_broker(self):
-        pass
-
-    def parse_client(self):
-        pass
-
-    def parse_negotiations(self):
-        pass
+        if (negotiations.get(key)):
+            self.__save_content_in(negotiations[key], column_name, content)
+        else:
+            negotiations[key] = {
+                column_name: [content]
+            }

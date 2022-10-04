@@ -1,17 +1,21 @@
 import json
 import fitz
 
-from reader.b3_reader import extract_mapped_words
+from reader.b3_reader import B3Reader
+
 
 def main():
     doc = fitz.open("example.pdf")
-    setting = open("setting.json")
+    settings_file = open("setting.json")
 
-    test = extract_mapped_words(doc[0], json.load(setting))
+    settings = json.load(settings_file)
+
+    settings_file.close()
+
+    reader = B3Reader(doc[0], settings)
+    test = reader.get_mapped_content()
 
     print(json.dumps(test, sort_keys=True, indent=4))
-
-    setting.close()
 
 
 if __name__ == '__main__':
