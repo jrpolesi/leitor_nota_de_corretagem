@@ -1,5 +1,4 @@
-
-from typing import Any, Dict, List
+from typing import Dict, List
 
 
 def is_inside_rect(rect: List[float], boundary_rect: List[float]) -> bool:
@@ -69,6 +68,8 @@ class B3Reader:
                     self.__save_negotiation(
                         content[1], column_name, content[4])
 
+        self.__name_negotiations_rows()
+
         return self.mapped_content
 
     def __get_area_name(self, word):
@@ -116,3 +117,28 @@ class B3Reader:
             negotiations[key] = {
                 column_name: [content]
             }
+
+    def __name_negotiations_rows(self):
+        negotiations = self.mapped_content["negotiations"]
+        named_negotiations = {}
+
+        for key, row in negotiations.items():
+            new_name = row.get("column_especificacao_do_titulo")
+
+            if (new_name and self.__is_negotiation(row)):
+                named_negotiations["_".join(new_name)] = negotiations.get(key)
+
+        self.mapped_content["negotiations"] = named_negotiations
+
+    def __is_negotiation(self, negotiation):
+        items = negotiation.values()
+
+        column_q = negotiation.get("column_q")
+
+        if (column_q and column_q[0] in "qQ"):
+            return False
+
+        if len(items) >= 7:
+            return True
+
+        return False
