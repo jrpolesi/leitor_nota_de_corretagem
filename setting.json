@@ -2,167 +2,235 @@
   "info_areas": {
     "cpf": {
       "top_left": [425.43, 143.44],
-      "bottom_right": [561.43, 159.59]
+      "bottom_right": [561.43, 159.59],
+      "initial_index": 1
     },
     "assessor": {
       "top_left": [520.05, 159.02],
-      "bottom_right": [561.33, 179.29]
+      "bottom_right": [561.33, 179.29],
+      "initial_index": 1
     },
     "C.I": {
       "top_left": [533.89, 180.93],
-      "bottom_right": [561.42, 197.16]
+      "bottom_right": [561.42, 197.16],
+      "initial_index": 1
     },
     "num_nota": {
       "top_left": [429.39, 52.92],
-      "bottom_right": [473.89, 71.48]
+      "bottom_right": [473.89, 71.48],
+      "initial_index": 2
     },
     "folha": {
       "top_left": [473.82, 52.96],
-      "bottom_right": [514.23, 71.45]
+      "bottom_right": [514.23, 71.45],
+      "initial_index": 1
     },
     "data_pregao": {
       "top_left": [514.17, 52.96],
-      "bottom_right": [561.37, 71.35]
+      "bottom_right": [561.37, 71.35],
+      "initial_index": 2
     },
     "corretora_info": {
-      "top_left": [126.42, 105.03],
-      "bottom_right": [560.69, 141.35]
-    },
-    "corretora_info2": {
-      "top_left": [127.51, 96.52],
-      "bottom_right": [561.75, 141.36]
+      "top_left": [126.42, 96.52],
+      "bottom_right": [560.69, 141.35],
+      "regex": {
+        "tel": "(?<=Tel\\. ).+?(?= Fax)",
+        "fax": "(?<=Fax: ).+?(?= Internet)",
+        "internet": "(?<=Internet: ).+?(?= SAC)",
+        "sac": "(?<=Fax: ).+?(?= Internet)",
+        "email": "(?<=e-mail: ).+?(?= C\\.N\\.P\\.J)",
+        "cnpj": "(?<=C\\.N\\.P\\.J: ).+?(?= Carta)",
+        "carta_patente": "(?<=Carta Patente: ).+?(?= Ouvidoria)",
+        "tel_ouvidoria": "(?<=Ouvidoria: Tel. ).+?(?= e-mail)",
+        "email_ouvidoria": "(?<=e-mail ouvidoria: ).+$"
+      }
     },
     "corretora_name": {
       "top_left": [128.12, 74.16],
-      "bottom_right": [561.68, 86.98]
+      "bottom_right": [561.68, 86.98],
+      "initial_index": 0
     },
     "corretora_endereco": {
       "top_left": [128.62, 86.36],
-      "bottom_right": [561.05, 96.3]
+      "bottom_right": [561.05, 96.3],
+      "initial_index": 0
     },
     "nome_cliente": {
       "top_left": [133.9, 143.83],
-      "bottom_right": [424.42, 157.75]
+      "bottom_right": [424.42, 157.75],
+      "initial_index": 0
     },
-    "cliente_endereco": {
+    "cliente_info": {
       "top_left": [132.9, 157.57],
-      "bottom_right": [423.24, 178.69]
+      "bottom_right": [423.24, 178.69],
+      "regex": {
+        "logradouro": "^.+?(?=Tel\\.)",
+        "tel": "(?<=Tel. ).+?(?=\\s\\d{5}-\\d{3}\\b)",
+        "cep": "\\d{5}-\\d{3}\\b",
+        "cidade": "(?<=.{5}-.{3}\\s).+?(?=\\s-\\s)",
+        "estado": "(?<=-\\s)\\w{2}$"
+      }
     },
     "codigo_cliente2": {
       "top_left": [425.52, 159.34],
-      "bottom_right": [520.27, 179.11]
+      "bottom_right": [520.27, 179.11],
+      "initial_index": 2
     },
     "cliente": {
       "top_left": [33.0, 143.52],
-      "bottom_right": [130.11, 179.2]
+      "bottom_right": [130.11, 179.2],
+      "initial_index": 1
     },
     "participante_destino_do_repasse": {
       "top_left": [32.65, 181.11],
-      "bottom_right": [229.29, 197.08]
+      "bottom_right": [229.29, 197.08],
+      "initial_index": 4
     },
     "cliente2": {
       "top_left": [231.16, 181.02],
-      "bottom_right": [321.56, 197.09]
+      "bottom_right": [321.56, 197.09],
+      "initial_index": 1
     },
     "valor": {
       "top_left": [323.36, 180.95],
-      "bottom_right": [423.1, 197.04]
+      "bottom_right": [423.1, 197.04],
+      "initial_index": 1
     },
     "custodiante": {
       "top_left": [425.44, 108.92],
-      "bottom_right": [534.06, 125.07]
+      "bottom_right": [534.06, 125.07],
+      "initial_index": 1
     },
     "banco": {
       "top_left": [32.8, 198.89],
-      "bottom_right": [62.56, 214.4]
+      "bottom_right": [62.56, 214.4],
+      "initial_index": 1
     },
     "agencia": {
       "top_left": [62.52, 198.89],
-      "bottom_right": [140.91, 214.4]
+      "bottom_right": [140.91, 214.4],
+      "initial_index": 1
     },
     "conta_corrente": {
       "top_left": [140.94, 198.79],
-      "bottom_right": [229.31, 214.43]
+      "bottom_right": [229.31, 214.43],
+      "initial_index": 2
     },
     "acionista": {
       "top_left": [231.17, 198.79],
-      "bottom_right": [321.58, 214.43]
+      "bottom_right": [321.58, 214.43],
+      "initial_index": 1
     },
     "administrador": {
       "top_left": [323.36, 198.79],
-      "bottom_right": [423.1, 214.43]
+      "bottom_right": [423.1, 214.43],
+      "initial_index": 1
     },
     "complemento_nome": {
       "top_left": [425.42, 198.79],
-      "bottom_right": [534.07, 214.43]
+      "bottom_right": [534.07, 214.43],
+      "initial_index": 2
     },
     "p_vinc": {
       "top_left": [533.77, 198.79],
-      "bottom_right": [561.34, 214.43]
+      "bottom_right": [561.34, 214.43],
+      "initial_index": 2
     },
     "clearing": {
       "top_left": [299.67, 460.62],
-      "bottom_right": [559.77, 506.37]
+      "bottom_right": [559.77, 506.37],
+      "regex": {
+        "liquido_das_operacoes": "(?<=operações ).+?(?= Taxa)",
+        "taxa_de_liquidacao": "(?<=liquidação ).+?(?= Taxa)",
+        "taxa_de_registro": "(?<=Registro ).+$"
+      }
     },
     "bolsa": {
       "top_left": [299.67, 506.38],
-      "bottom_right": [559.67, 552.02]
+      "bottom_right": [559.67, 552.02],
+      "regex": {
+        "taxa_de_termo_opcoes": "(?<=opções ).+?(?= Taxa)",
+        "ana": "(?<=A\\.N\\.A\\. ).+?(?= Emolumentos)",
+        "emolumentos": "(?<=Emolumentos ).+$"
+      }
     },
     "custos_operacionais": {
       "top_left": [299.67, 552.03],
-      "bottom_right": [559.67, 639.07]
+      "bottom_right": [559.67, 639.07],
+      "regex": {
+        "taxa_operacional": "(?<=Taxa Operacional ).+?(?= Execução)",
+        "execucao": "(?<=Execução ).+?(?= Taxa)",
+        "taxa_de_custodia": "(?<=Taxa de Custódia ).+?(?= Impostos)",
+        "impostos": "(?<=Impostos ).+?(?= I\\.R\\.R\\.F)",
+        "irrf_sobre_operacoes": "(?<=\\d\\d\\s)\\d*,\\d*?(?= Outros)",
+        "outros": "(?<=Outros ).+$"
+      }
     },
     "liquido_da_nota": {
       "top_left": [299.67, 639.07],
-      "bottom_right": [559.67, 648.71]
+      "bottom_right": [559.67, 648.71],
+      "regex": {
+        "data": "(?<=para ).+$",
+        "valor": "^.+?(?= Líquido)"
+      }
     },
     "resumo_dos_negocios": {
       "top_left": [32.69, 450.71],
-      "bottom_right": [297.78, 554.0]
+      "bottom_right": [297.78, 554.0],
+      "regex": {
+        "debentures": "(?<=Debêntures ).+?(?= Vendas)",
+        "vendas_a_vista": "(?<=Vendas à vista ).+?(?= Compras)",
+        "compras_a_vista": "(?<=Compras à vista ).+?(?= Opções)",
+        "opcoes_compras": "(?<=- compras ).+?(?= Opções)",
+        "opcoes_vendas": "(?<=- vendas ).+?(?= Operações)",
+        "operacoes_a_termo": "(?<=Operações à termo ).+?(?= Valor)",
+        "valor_das_operacoes_com_titulos_publicos": "(?<=\\(v\\. nom\\.\\) ).+?(?= Valor)",
+        "valor_das_operacoes": "(?<=Valor das operações ).+$"
+      }
     }
   },
   "negotiations_columns": {
-    "column_q": {
+    "q": {
       "left": 33.96,
       "right": 41.98
     },
-    "column_negociacao": {
+    "negociacao": {
       "left": 43.25,
       "right": 86.39
     },
-    "column_cv": {
+    "cv": {
       "left": 87.61,
       "right": 103.1
     },
-    "column_tipo_mercado": {
+    "tipo_mercado": {
       "left": 104.25,
       "right": 158.45
     },
-    "column_prazo": {
+    "prazo": {
       "left": 159.67,
       "right": 182.05
     },
-    "column_especificacao_do_titulo": {
+    "especificacao_do_titulo": {
       "left": 183.33,
       "right": 319.29
     },
-    "column_obs": {
+    "obs": {
       "left": 320.53,
       "right": 351.01
     },
-    "column_quantidade": {
+    "quantidade": {
       "left": 352.24,
       "right": 397.65
     },
-    "column_preco_ajuste": {
+    "preco_ajuste": {
       "left": 398.98,
       "right": 451.36
     },
-    "column_valor_operacao_ajuste": {
+    "valor_operacao_ajuste": {
       "left": 452.54,
       "right": 543
     },
-    "column_dc": {
+    "dc": {
       "left": 544.17,
       "right": 560.27
     }
