@@ -1,3 +1,4 @@
+import re
 from typing import Dict, List
 
 
@@ -36,7 +37,7 @@ class B3Reader:
 
     mapped_content = {
         "info": {},
-        "negotiations": {}
+        "negotiations": []
     }
 
     def __init__(self, page, settings):
@@ -55,20 +56,25 @@ class B3Reader:
         return self.__map_page_content()
 
     def __map_page_content(self):
+        mapped_negotiations = {}
+        mapped_info = {}
         for content in self.raw_content:
             area_name = self.__get_area_name(content)
 
             if area_name:
-                self.__save_info_content(area_name, content[4])
+                self.__save_info_content_in(
+                    mapped_info, area_name, content[4])
 
             else:
                 column_name = self.__get_column_name(content)
 
                 if column_name:
-                    self.__save_negotiation(
-                        content[1], column_name, content[4])
+                    self.__save_negotiation_in(
+                        mapped_negotiations, content[1], column_name, content[4])
 
-        self.__name_negotiations_rows()
+        self.mapped_content["negotiations"] = self.__parse_negotiations(
+            mapped_negotiations)
+        self.mapped_content["info"] = self.__parse_infos(mapped_info)
 
         return self.mapped_content
 
@@ -97,43 +103,78 @@ class B3Reader:
         return None
 
     def __save_content_in(self, obj: Dict, key: str, content: str):
-
         if (obj.get(key)):
             obj[key].append(content)
         else:
             obj[key] = [content]
 
-    def __save_info_content(self, key, content):
-        info_contents = self.mapped_content["info"]
+    def __save_info_content_in(self, obj: Dict, key, content):
+        self.__save_content_in(obj, key, content)
 
-        self.__save_content_in(info_contents, key, content)
-
-    def __save_negotiation(self, key: str, column_name,  content: str):
-        negotiations = self.mapped_content["negotiations"]
-
-        if (negotiations.get(key)):
-            self.__save_content_in(negotiations[key], column_name, content)
+    def __save_negotiation_in(self, obj: Dict, key: str, column_name,  content: str):
+        if (obj.get(key)):
+            self.__save_content_in(obj[key], column_name, content)
         else:
-            negotiations[key] = {
+            obj[key] = {
                 column_name: [content]
             }
 
-    def __name_negotiations_rows(self):
-        negotiations = self.mapped_content["negotiations"]
-        named_negotiations = {}
+    def __parse_negotiations(self, negotiations):
+        negotiations_array = []
 
-        for key, row in negotiations.items():
-            new_name = row.get("column_especificacao_do_titulo")
+        for negotiation in negotiations.values():
+            if self.__is_negotiation(negotiation):
+                parsed_negotiation = self.__parse_negotiation(negotiation)
 
-            if (new_name and self.__is_negotiation(row)):
-                named_negotiations["_".join(new_name)] = negotiations.get(key)
+                negotiations_array.append(parsed_negotiation)
 
-        self.mapped_content["negotiations"] = named_negotiations
+        return negotiations_array
+
+    def __parse_negotiation(self, negotiation):
+        parsed_negotiation = {}
+
+        for key, column in negotiation.items():
+            parsed_negotiation[key] = " ".join(column)
+
+        return parsed_negotiation
+
+    def __parse_infos(self, infos):
+        parsed_infos = {}
+        settings = self.info_areas_setting
+
+        for key, info in infos.items():
+            info_settings = settings.get(key)
+
+            parsed_infos[key] = self.__parse_info(info, info_settings)
+
+        return parsed_infos
+
+    def __parse_info(self, info, settings):
+        initial_index = settings.get("initial_index")
+        regex = settings.get("regex")
+
+        if (initial_index is not None):
+            return " ".join(info[initial_index:])
+        elif (isinstance(regex, dict)):
+            string = " ".join(info)
+            results = {}
+
+            for key, value in regex.items():
+                teste = re.search(value, string)
+
+                if (teste):
+                    results[key] = teste.group()
+
+            return results
+        elif (regex is not None):
+            return " ".join(info)
+
+        return info
 
     def __is_negotiation(self, negotiation):
         items = negotiation.values()
 
-        column_q = negotiation.get("column_q")
+        column_q = negotiation.get("q")
 
         if (column_q and column_q[0] in "qQ"):
             return False
